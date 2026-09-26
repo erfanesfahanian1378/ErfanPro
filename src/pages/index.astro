@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Avatar from '../components/Avatar.astro';
+import Icon from '../components/Icon.astro';
+import PostList from '../components/PostList.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { SITE, SOCIALS } from '../data/site';
+import { EDUCATION, EXPERIENCE, SKILLS } from '../data/cv';
+import { getPosts, getProjects } from '../lib/content';
+
+const posts = (await getPosts()).slice(0, 3);
+const featured = (await getProjects()).filter((project) => project.data.featured).slice(0, 4);
+const recentRoles = EXPERIENCE.slice(0, 5);
+const linkedin = SOCIALS.find((link) => link.icon === 'linkedin');
+
+// Structured data so search engines understand who this site is about.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  jobTitle: SITE.role,
+  url: Astro.site?.href,
+  email: `mailto:${SITE.email}`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Milan', addressCountry: 'IT' },
+  alumniOf: EDUCATION.map((degree) => ({ '@type': 'CollegeOrUniversity', name: degree.school })),
+  sameAs: SOCIALS.filter((link) => link.icon !== 'mail').map((link) => link.href),
+};
+---
+
+<BaseLayout type="profile">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
+
+  <section class="hero" aria-labelledby="intro">
+    <Avatar size={88} />
+    <h1 id="intro">{SITE.name}</h1>
+    <p class="hero-role">
+      {SITE.role} · <span class="stack">{SITE.stack.join(', ')}</span>
+    </p>
+    <ul class="hero-facts">
+      <li><Icon name="mapPin" size={18} />{SITE.location}</li>
+      <li><Icon name="briefcase" size={18} />{SITE.current}</li>
+      <li><Icon name="school" size={18} />MSc Computer Science, Università degli Studi di Milano</li>
+    </ul>
+    <div class="hero-bio">
+      <p>
+        I'm a software engineer with production experience since 2019. Right now I'm a back-end engineer at
+        <strong>MotorK</strong> in Milan, on Leadspark, its automotive lead-management product: I build the CRM
+        integrations for European dealer groups and own the web-scraping and RPA automation stack.
+      </p>
+      <p>
+        Most of my work has been TypeScript and Node.js on the server, React or React Native on the client, and
+        PostgreSQL, MongoDB and Redis underneath, with Go, Python and PHP where they fit. I'm happy being the engineer
+        other teams depend on: integrations, pipelines, CI/CD, dashboards and alerting.
+      </p>
+      <p>
+        I finished my MSc in Computer Science in July 2026. At university I also get to build games and AI projects.
+      </p>
+    </div>
+    <div class="button-row">
+      <a class="button button-primary" href="/cv/">
+        View my CV
+        <Icon name="arrowRight" size={18} />
+      </a>
+      {
+        SOCIALS.map((link) => (
+          <a
+            class="button"
+            href={link.href}
+            rel={link.icon === 'mail' ? undefined : 'me noopener'}
+            target={link.icon === 'mail' ? undefined : '_blank'}
+          >
+            <Icon name={link.icon} size={18} />
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="experience">
+    <SectionHeading id="experience" title="Experience" more={{ href: '/cv/', label: 'Full CV' }} />
+    <ol class="timeline">
+      {
+        recentRoles.map((role) => (
+          <li class="timeline-item">
+            <p class="timeline-dates">
+              {role.start} – {role.end}
+            </p>
+            <div>
+              <h3 class="timeline-title">
+                {role.title} <span class="org">· {role.org}</span>
+              </h3>
+              <p class="timeline-text">{role.highlights[0]}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section class="section" aria-labelledby="projects">
+        <SectionHeading id="projects" title="Selected projects" more={{ href: '/projects/', label: 'All projects' }} />
+        <div class="card-grid">
+          {featured.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="posts">
+    <SectionHeading id="posts" title="Latest posts" more={{ href: '/blog/', label: 'All posts' }} />
+    {posts.length > 0 ? <PostList posts={posts} /> : <p class="muted">Nothing here yet. Check back soon.</p>}
+  </section>
+
+  <section class="section" aria-labelledby="skills">
+    <SectionHeading id="skills" title="Skills" />
+    <dl class="skills">
+      {
+        SKILLS.map(({ group, items }) => (
+          <div class="skill-row">
+            <dt>{group}</dt>
+            <dd>
+              <ul class="tags">
+                {items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="section" aria-labelledby="education">
+    <SectionHeading id="education" title="Education" />
+    <ol class="timeline">
+      {
+        EDUCATION.map((degree) => (
+          <li class="timeline-item">
+            <p class="timeline-dates">{degree.period}</p>
+            <div>
+              <h3 class="timeline-title">
+                {degree.degree} <span class="org">· {degree.school}</span>
+              </h3>
+              <p class="timeline-text">
+                {[degree.detail, degree.location, ...degree.notes].filter(Boolean).join(' · ')}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section contact" aria-labelledby="contact">
+    <SectionHeading id="contact" title="Get in touch" />
+    <p class="contact-text">
+      Want to work together or just say hello? Email me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{
+        linkedin ? <> or send me a message on <a href={linkedin.href}>LinkedIn</a></> : null
+      }.
+    </p>
+  </section>
+</BaseLayout>

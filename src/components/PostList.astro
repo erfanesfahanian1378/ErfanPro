@@ -1,0 +1,28 @@
+---
+import { formatDate, postUrl, type Post } from '../lib/content';
+
+interface Props {
+  posts: Post[];
+  /** Show each post's description under its title. */
+  descriptions?: boolean;
+}
+
+const { posts, descriptions = false } = Astro.props;
+---
+
+<ul class="post-list">
+  {
+    posts.map((post) => (
+      <li>
+        <a href={postUrl(post)} class="post-link">
+          <span class="post-title">
+            {post.data.title}
+            {post.data.draft && <span class="badge">Draft</span>}
+          </span>
+          <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        </a>
+        {descriptions && <p class="post-description">{post.data.description}</p>}
+      </li>
+    ))
+  }
+</ul>

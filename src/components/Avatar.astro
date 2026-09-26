@@ -1,0 +1,19 @@
+---
+import { SITE } from '../data/site';
+
+interface Props {
+  size?: number;
+}
+
+const { size = 96 } = Astro.props;
+---
+
+<div class="avatar" style={`--avatar-size: ${size}px`}>
+  {
+    SITE.avatar ? (
+      <img src={SITE.avatar} alt={`Photo of ${SITE.name}`} width={size} height={size} decoding="async" />
+    ) : (
+      <span aria-hidden="true">{SITE.initials}</span>
+    )
+  }
+</div>

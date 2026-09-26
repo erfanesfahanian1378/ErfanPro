@@ -1,0 +1,64 @@
+---
+import { render } from 'astro:content';
+import Icon from './Icon.astro';
+import type { Project } from '../lib/content';
+
+interface Props {
+  project: Project;
+  /** Full cards also show highlights, links and the Markdown body. */
+  full?: boolean;
+}
+
+const { project, full = false } = Astro.props;
+const { title, summary, period, role, tags, highlights, links } = project.data;
+const hasBody = full && Boolean(project.body?.trim());
+const { Content } = hasBody ? await render(project) : { Content: null };
+---
+
+<article class="card project-card">
+  <header>
+    <h3>{title}</h3>
+    <p class="card-meta">
+      {role && <span>{role}</span>}
+      <span>{period}</span>
+    </p>
+  </header>
+  <p class="project-summary">{summary}</p>
+  {
+    full && highlights.length > 0 && (
+      <ul class="project-highlights">
+        {highlights.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )
+  }
+  {
+    Content && (
+      <div class="prose project-body">
+        <Content />
+      </div>
+    )
+  }
+  {
+    tags.length > 0 && (
+      <ul class="tags" aria-label="Technologies">
+        {tags.map((tag) => (
+          <li>{tag}</li>
+        ))}
+      </ul>
+    )
+  }
+  {
+    full && links.length > 0 && (
+      <p class="project-links">
+        {links.map((link) => (
+          <a href={link.url} target="_blank" rel="noopener">
+            {link.label}
+            <Icon name="arrowUpRight" size={16} />
+          </a>
+        ))}
+      </p>
+    )
+  }
+</article>

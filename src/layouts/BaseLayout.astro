@@ -1,0 +1,29 @@
+---
+import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+type Props = HeadProps & {
+  /** Extra class on <main>, e.g. to change the page width. */
+  mainClass?: string;
+};
+
+const { mainClass, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead {...head} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" class:list={['container', mainClass]}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

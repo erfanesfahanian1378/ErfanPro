@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, SOCIALS } from '../data/site';
+import { EDUCATION, EXPERIENCE, LANGUAGES, PROFILE, SKILLS } from '../data/cv';
+
+// "github.com/erfanesfahanian1378" instead of the full URL, so the printed CV stays readable.
+const display = (href: string) => href.replace(/^mailto:/, '').replace(/^https?:\/\/(www\.)?/, '');
+const website = Astro.site ? display(Astro.site.href).replace(/\/$/, '') : '';
+---
+
+<BaseLayout
+  title="CV"
+  description={`CV of ${SITE.name}, ${SITE.role.toLowerCase()} in ${SITE.location}: experience, education and skills.`}
+  mainClass="cv-page"
+>
+  <header class="cv-header">
+    <div>
+      <h1>{SITE.name}</h1>
+      <p class="cv-headline">{SITE.role} · {SITE.stack.join(', ')}</p>
+      <ul class="cv-contact">
+        <li><Icon name="mapPin" size={16} />{SITE.location}</li>
+        {
+          SOCIALS.map((link) => (
+            <li>
+              <a href={link.href}>
+                <Icon name={link.icon} size={16} />
+                {display(link.href)}
+              </a>
+            </li>
+          ))
+        }
+        {website && <li class="print-only">{website}</li>}
+      </ul>
+    </div>
+    <button type="button" class="button print-button" onclick="window.print()">
+      <Icon name="printer" size={18} />
+      Save as PDF
+    </button>
+  </header>
+
+  <section class="cv-section" aria-labelledby="cv-profile">
+    <h2 id="cv-profile">Profile</h2>
+    {PROFILE.map((paragraph) => <p>{paragraph}</p>)}
+  </section>
+
+  <section class="cv-section" aria-labelledby="cv-experience">
+    <h2 id="cv-experience">Experience</h2>
+    {
+      EXPERIENCE.map((role) => (
+        <article class="cv-entry">
+          <div class="cv-entry-head">
+            <h3>
+              {role.title} <span class="org">· {role.org}</span>
+            </h3>
+            <p class="cv-dates">
+              {role.start} – {role.end}
+            </p>
+          </div>
+          <p class="cv-meta">{[role.note, role.location, role.mode].filter(Boolean).join(' · ')}</p>
+          <ul>
+            {role.highlights.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="cv-section" aria-labelledby="cv-education">
+    <h2 id="cv-education">Education</h2>
+    {
+      EDUCATION.map((degree) => (
+        <article class="cv-entry">
+          <div class="cv-entry-head">
+            <h3>
+              {degree.degree}
+              {degree.detail && <span class="org"> ({degree.detail})</span>}
+            </h3>
+            <p class="cv-dates">{degree.period}</p>
+          </div>
+          <p class="cv-meta">
+            {degree.school}, {degree.location}
+          </p>
+          {degree.notes.length > 0 && <p>{degree.notes.join(' · ')}</p>}
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="cv-section" aria-labelledby="cv-skills">
+    <h2 id="cv-skills">Technical skills</h2>
+    <dl class="cv-skills">
+      {
+        SKILLS.map(({ group, items }) => (
+          <div>
+            <dt>{group}</dt>
+            <dd>{items.join(', ')}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="cv-section" aria-labelledby="cv-languages">
+    <h2 id="cv-languages">Languages</h2>
+    <ul class="cv-languages">
+      {
+        LANGUAGES.map((language) => (
+          <li>
+            <strong>{language.name}</strong> <span>· {language.level}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
