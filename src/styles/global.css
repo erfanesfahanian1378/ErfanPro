@@ -588,10 +588,6 @@ a:hover {
   font-size: 1.15rem;
 }
 
-.hero-role .stack {
-  color: var(--text-3);
-}
-
 .hero-facts {
   display: flex;
   flex-wrap: wrap;

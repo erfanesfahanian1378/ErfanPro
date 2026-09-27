@@ -16,14 +16,14 @@ const roleSections = [
 
 <BaseLayout
   title="CV"
-  description={`CV of ${SITE.name}, ${SITE.role.toLowerCase()} in ${SITE.location}: experience, education and skills.`}
+  description={`CV of ${SITE.name}, software engineer and full-stack developer in ${SITE.location}: experience, education and skills.`}
   mainClass="cv-page"
 >
   <header class="cv-header">
     {SITE.avatar && <img class="cv-photo" src={SITE.avatar} alt={`Photo of ${SITE.name}`} width="104" height="104" />}
     <div>
       <h1>{SITE.name}</h1>
-      <p class="cv-headline">{SITE.role} · {SITE.stack.join(', ')}</p>
+      <p class="cv-headline">{SITE.headline}</p>
       <ul class="cv-contact">
         <li><Icon name="mapPin" size={16} />{SITE.location}</li>
         {

@@ -13,11 +13,13 @@ export const SITE = {
   name: 'Erfan Esfahanian',
   initials: 'EE',
   /** Default <title> for pages that don't set their own. */
-  title: 'Erfan Esfahanian · Full-stack engineer',
+  title: 'Erfan Esfahanian · Software Engineer & Full-stack Developer',
   description:
-    'Erfan Esfahanian is a full-stack engineer in Milan working across TypeScript/Node, Go and Python back ends, React front ends, integrations and automation.',
-  role: 'Full-stack engineer',
-  stack: ['TypeScript/Node', 'React', 'PostgreSQL', 'CI/CD'],
+    'Erfan Esfahanian is a software engineer and full-stack developer in Milan working across TypeScript/Node, Go, Python and PHP back ends, React front ends, integrations and automation.',
+  /** Job title, used in search-engine data. */
+  role: 'Software Engineer',
+  /** Shown under your name on the home page and the CV. */
+  headline: 'Software Engineer · Full-stack Developer',
   location: 'Milan, Italy',
   current: 'Software Engineer at MotorK',
   email: 'es.erfan95@gmail.com',
