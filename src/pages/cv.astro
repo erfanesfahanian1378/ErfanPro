@@ -20,6 +20,7 @@ const roleSections = [
   mainClass="cv-page"
 >
   <header class="cv-header">
+    {SITE.avatar && <img class="cv-photo" src={SITE.avatar} alt={`Photo of ${SITE.name}`} width="104" height="104" />}
     <div>
       <h1>{SITE.name}</h1>
       <p class="cv-headline">{SITE.role} · {SITE.stack.join(', ')}</p>

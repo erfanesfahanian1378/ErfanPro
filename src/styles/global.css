@@ -241,6 +241,14 @@ a:hover {
   letter-spacing: 0.03em;
 }
 
+.brand-photo {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+
 .nav-list {
   display: flex;
   gap: 0.15rem;
@@ -1039,8 +1047,19 @@ a:hover {
 }
 
 .cv-header > div {
-  flex: 1 1 26rem;
+  flex: 1 1 22rem;
   min-width: 0;
+}
+
+.cv-photo {
+  flex: none;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 4px var(--bg),
+    0 0 0 5px var(--border-strong);
 }
 
 .cv-headline {
@@ -1299,7 +1318,14 @@ a:hover {
   }
 
   .cv-header {
+    align-items: center;
     padding-bottom: 0.8rem;
+  }
+
+  .cv-photo {
+    width: 84px;
+    height: 84px;
+    box-shadow: none;
   }
 
   .cv-header h1 {
