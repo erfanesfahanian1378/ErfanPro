@@ -435,6 +435,6 @@ export const LANGUAGES: { name: Localized; level: Localized }[] = [
   },
   {
     name: { en: 'Italian', it: 'Italiano', fa: 'ایتالیایی' },
-    level: { en: 'Basic (A1)', it: 'Base (A1)', fa: 'مقدماتی (A1)' },
+    level: { en: 'Basic (A2)', it: 'Base (A2)', fa: 'مقدماتی (A2)' },
   },
 ];
