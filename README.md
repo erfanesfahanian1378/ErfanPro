@@ -73,6 +73,10 @@ Both options below are on Cloudflare's free plan. The site is only static files:
    - **Root directory:** leave empty
 4. Click **Deploy**. The site goes live at `https://<project-name>.<your-subdomain>.workers.dev` and redeploys on every push to the production branch (`main` unless you change it).
 
+**Already uploaded the site by hand?** Connect the existing Worker instead: open it under **Workers & Pages**, go to **Settings → Build → Connect**, pick this repository and branch `main`, and use the settings above. The Worker's name must match `name` in `wrangler.jsonc` (`erfanpro`). Cloudflare builds on the next push.
+
+**To check a deploy**, open the Worker's **Deployments** tab and choose **View build history**, or look at the check mark next to the commit on GitHub.
+
 The deployment settings live in `wrangler.jsonc`: serve `dist/`, and use `404.html` for missing pages. Keep that file. Without it, Cloudflare tries to auto-configure the project and opens a pull request that converts it to server rendering, which you don't need.
 
 ### Option B: Cloudflare Pages
