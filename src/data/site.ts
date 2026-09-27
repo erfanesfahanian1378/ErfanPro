@@ -27,7 +27,7 @@ export const SITE = {
  * See "Get found when people search your name" in README.md.
  */
 export const VERIFICATION = {
-  google: '',
+  google: 'MoxoB8i_k6l4f0GXU0UL0H6ESPRPr9ahWbCRcXSdEgc',
   bing: '',
 };
 
