@@ -6,7 +6,7 @@ const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || path.startsWith(href);
 ---
 
-<header class="site-header">
+<header class="site-header" transition:name="site-header" transition:animate="none">
   <div class="container header-inner">
     <a href="/" class="brand" aria-label={`${SITE.name}, home`}>
       {
@@ -42,10 +42,12 @@ const isActive = (href: string) => path === href || path.startsWith(href);
 
 <script>
   const root = document.documentElement;
-  const button = document.getElementById('theme-toggle');
-  const sync = () => button?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+  const sync = () =>
+    document.getElementById('theme-toggle')?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
 
-  button?.addEventListener('click', () => {
+  // The header is replaced on every page switch, so listen on the document rather than the button.
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element) || !event.target.closest('#theme-toggle')) return;
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     try {
@@ -69,5 +71,6 @@ const isActive = (href: string) => path === href || path.startsWith(href);
     sync();
   });
 
+  document.addEventListener('astro:page-load', sync);
   sync();
 </script>

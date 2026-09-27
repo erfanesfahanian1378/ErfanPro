@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import { SITE } from '../data/site';
 
 export interface Props {
@@ -62,16 +63,33 @@ const feed = new URL('rss.xml', Astro.site);
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
+<!-- Switch pages in place (no full reload), with a short fade. Also prefetches links on hover. -->
+<ClientRouter />
+
 <script is:inline>
   // Apply the saved (or system) colour theme before the page paints, to avoid a flash.
   (function () {
+    function preferredTheme() {
+      var saved = null;
+      try {
+        saved = localStorage.getItem('theme');
+      } catch (e) {}
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
     var root = document.documentElement;
     root.classList.add('js');
-    var saved = null;
-    try {
-      saved = localStorage.getItem('theme');
-    } catch (e) {}
-    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    root.dataset.theme = dark ? 'dark' : 'light';
+    root.dataset.theme = preferredTheme();
+
+    // Page switches replace the <html> attributes with the incoming page's, so carry the
+    // current theme over to each new page before it is shown.
+    if (!window.__themeCarriedOver) {
+      window.__themeCarriedOver = true;
+      document.addEventListener('astro:before-swap', function (event) {
+        var next = event.newDocument.documentElement;
+        next.classList.add('js');
+        next.dataset.theme = document.documentElement.dataset.theme || preferredTheme();
+      });
+    }
   })();
 </script>
