@@ -22,10 +22,10 @@ export const SITE = {
   current: 'Software Engineer at MotorK',
   email: 'es.erfan95@gmail.com',
   /**
-   * Optional profile photo. Put a square image (at least 256×256) in /public
-   * and set its path here, e.g. '/avatar.jpg'. When empty, your initials are shown.
+   * Profile photo: a square image (at least 256×256) in /public.
+   * Set it to '' to show your initials instead.
    */
-  avatar: '',
+  avatar: '/avatar.jpg',
 };
 
 export const SOCIALS: SocialLink[] = [

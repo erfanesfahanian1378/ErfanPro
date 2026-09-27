@@ -21,6 +21,7 @@ const person = {
   name: SITE.name,
   jobTitle: SITE.role,
   url: Astro.site?.href,
+  image: SITE.avatar ? new URL(SITE.avatar, Astro.site).href : undefined,
   email: `mailto:${SITE.email}`,
   address: { '@type': 'PostalAddress', addressLocality: 'Milan', addressCountry: 'IT' },
   alumniOf: EDUCATION.map((degree) => ({ '@type': 'CollegeOrUniversity', name: degree.school })),
@@ -45,16 +46,18 @@ const person = {
     <div class="hero-bio">
       <p>
         I'm a software engineer with production experience since 2019. Right now I'm a back-end engineer at
-        <strong>MotorK</strong> in Milan, on Leadspark, its automotive lead-management product: I build the CRM
-        integrations for European dealer groups and own the web-scraping and RPA automation stack.
+        <strong>MotorK</strong> in Milan, on Leadspark, its automotive lead-management product: I build the PHP and
+        Python services behind its CRM integrations with European dealer groups, own the web-scraping and RPA
+        automation stack, and keep it fast and observable with Redis, Kubernetes and Grafana.
       </p>
       <p>
         Most of my work has been TypeScript and Node.js on the server, React or React Native on the client, and
-        PostgreSQL, MongoDB and Redis underneath, with Go, Python and PHP where they fit. I'm happy being the engineer
-        other teams depend on: integrations, pipelines, CI/CD, dashboards and alerting.
+        PostgreSQL, MongoDB and Redis underneath, with Go, Python and PHP where they fit. I also design systems for
+        load, with Kafka, Redis and load balancers, and I'm happy being the engineer other teams depend on.
       </p>
       <p>
-        I finished my MSc in Computer Science in July 2026. At university I also get to build games and AI projects.
+        I finished my MSc in Computer Science in July 2026. At university I also get to build games and AI projects,
+        and in my own time I build my own products, like Quaderno, Kelid and macsmartcleaner.
       </p>
     </div>
     <div class="button-row">
@@ -114,7 +117,7 @@ const person = {
 
   <section class="section" aria-labelledby="posts">
     <SectionHeading id="posts" title="Latest posts" more={{ href: '/blog/', label: 'All posts' }} />
-    {posts.length > 0 ? <PostList posts={posts} /> : <p class="muted">Nothing here yet. Check back soon.</p>}
+    {posts.length > 0 ? <PostList posts={posts} /> : <p class="muted">No posts yet.</p>}
   </section>
 
   <section class="section" aria-labelledby="skills">

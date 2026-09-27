@@ -10,5 +10,5 @@ highlights:
   - Built the back end on MongoDB with Redis caching and RabbitMQ for matching, notifications and media processing.
   - Designed the matching and messaging data model.
   - Shipped the whole product on roughly 20 hours a week.
-featured: true
+featured: false
 ---

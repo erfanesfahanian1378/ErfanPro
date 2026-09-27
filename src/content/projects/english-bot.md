@@ -10,5 +10,5 @@ highlights:
   - Self-hosted a 14B model on Ollama instead of paying per token for OpenAI, cutting inference cost to infrastructure cost.
   - Wrote the matching engine in C++ for throughput and connected it to the rest of the system through API gateways in a microservice layout.
   - Used Redis and Kafka for load balancing and queueing across the conversation and matching services.
-featured: true
+featured: false
 ---

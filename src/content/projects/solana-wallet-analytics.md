@@ -9,5 +9,5 @@ tags: [Kubernetes, Crawling, Rate limiting, Solana]
 highlights:
   - Worked around strict third-party API rate limits by sharding the workload across 40+ parallel workers on Kubernetes, with back-off and checkpointing.
   - Persisted and de-duplicated results so repeated runs were incremental rather than full re-crawls.
-featured: true
+featured: false
 ---

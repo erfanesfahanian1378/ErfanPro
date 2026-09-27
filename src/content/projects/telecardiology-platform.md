@@ -4,7 +4,7 @@ summary: System architecture and back end for a subscription telecardiology serv
 kind: work
 period: 2021 – 2022
 date: 2022-12-01
-role: Back End Developer & System Designer · Zist Pardazesh Nasir
+role: System Designer & Full-stack Developer · Zistel
 tags: [Go, Express.js, RabbitMQ, MongoDB, Healthcare]
 highlights:
   - Cut the manual review load per patient by automating the path from device reading to cardiologist.

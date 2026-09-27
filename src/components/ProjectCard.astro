@@ -5,7 +5,7 @@ import type { Project } from '../lib/content';
 
 interface Props {
   project: Project;
-  /** Full cards also show highlights, links and the Markdown body. */
+  /** Full cards also show highlights and the Markdown body. */
   full?: boolean;
 }
 
@@ -50,7 +50,7 @@ const { Content } = hasBody ? await render(project) : { Content: null };
     )
   }
   {
-    full && links.length > 0 && (
+    links.length > 0 && (
       <p class="project-links">
         {links.map((link) => (
           <a href={link.url} target="_blank" rel="noopener">

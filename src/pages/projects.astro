@@ -8,9 +8,9 @@ import { getProjects, type Project } from '../lib/content';
 const projects = await getProjects();
 
 const groups: { kind: Project['data']['kind']; title: string }[] = [
+  { kind: 'personal', title: 'Personal & open source' },
   { kind: 'work', title: 'Work' },
   { kind: 'university', title: 'University' },
-  { kind: 'personal', title: 'Personal' },
 ];
 
 const sections = groups
@@ -18,12 +18,12 @@ const sections = groups
   .filter((group) => group.items.length > 0);
 ---
 
-<BaseLayout title="Projects" description={`Projects by ${SITE.name}: production systems, client work and university projects.`}>
+<BaseLayout title="Projects" description={`Projects by ${SITE.name}: personal products on GitHub, production systems, client work and university research.`}>
   <header class="page-header">
     <h1>Projects</h1>
     <p class="lead">
-      Things I've built and worked on, from production systems to university research. For the full picture of each
-      role, see my <a href="/cv/">CV</a>.
+      Things I've built: my own products on GitHub, production systems at work and university research. For the full
+      picture of each role, see my <a href="/cv/">CV</a>.
     </p>
   </header>
 

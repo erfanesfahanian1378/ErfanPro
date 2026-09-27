@@ -2,11 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, SOCIALS } from '../data/site';
-import { EDUCATION, EXPERIENCE, LANGUAGES, PROFILE, SKILLS } from '../data/cv';
+import { EDUCATION, EXPERIENCE, LANGUAGES, OTHER_EXPERIENCE, PROFILE, SKILLS } from '../data/cv';
 
 // "github.com/erfanesfahanian1378" instead of the full URL, so the printed CV stays readable.
 const display = (href: string) => href.replace(/^mailto:/, '').replace(/^https?:\/\/(www\.)?/, '');
 const website = Astro.site ? display(Astro.site.href).replace(/\/$/, '') : '';
+
+const roleSections = [
+  { id: 'cv-experience', title: 'Experience', roles: EXPERIENCE },
+  { id: 'cv-other', title: 'Other experience', roles: OTHER_EXPERIENCE },
+].filter((section) => section.roles.length > 0);
 ---
 
 <BaseLayout
@@ -44,29 +49,31 @@ const website = Astro.site ? display(Astro.site.href).replace(/\/$/, '') : '';
     {PROFILE.map((paragraph) => <p>{paragraph}</p>)}
   </section>
 
-  <section class="cv-section" aria-labelledby="cv-experience">
-    <h2 id="cv-experience">Experience</h2>
-    {
-      EXPERIENCE.map((role) => (
-        <article class="cv-entry">
-          <div class="cv-entry-head">
-            <h3>
-              {role.title} <span class="org">· {role.org}</span>
-            </h3>
-            <p class="cv-dates">
-              {role.start} – {role.end}
-            </p>
-          </div>
-          <p class="cv-meta">{[role.note, role.location, role.mode].filter(Boolean).join(' · ')}</p>
-          <ul>
-            {role.highlights.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        </article>
-      ))
-    }
-  </section>
+  {
+    roleSections.map((section) => (
+      <section class="cv-section" aria-labelledby={section.id}>
+        <h2 id={section.id}>{section.title}</h2>
+        {section.roles.map((role) => (
+          <article class="cv-entry">
+            <div class="cv-entry-head">
+              <h3>
+                {role.title} <span class="org">· {role.org}</span>
+              </h3>
+              <p class="cv-dates">
+                {role.start} – {role.end}
+              </p>
+            </div>
+            <p class="cv-meta">{[role.note, role.location, role.mode].filter(Boolean).join(' · ')}</p>
+            <ul>
+              {role.highlights.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
+    ))
+  }
 
   <section class="cv-section" aria-labelledby="cv-education">
     <h2 id="cv-education">Education</h2>
