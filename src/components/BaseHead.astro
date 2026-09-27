@@ -1,6 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import { SITE } from '../data/site';
+import { SITE, VERIFICATION } from '../data/site';
 import { DEFAULT_LOCALE, LOCALES, LOCALE_META, localizePath, stripLocale, type Locale } from '../i18n/config';
 import { ui } from '../i18n/ui';
 
@@ -46,6 +46,8 @@ const feed = new URL('rss.xml', Astro.site);
 <meta name="description" content={pageDescription} />
 <meta name="author" content={SITE.name} />
 <meta name="generator" content={Astro.generator} />
+{VERIFICATION.google && <meta name="google-site-verification" content={VERIFICATION.google} />}
+{VERIFICATION.bing && <meta name="msvalidate.01" content={VERIFICATION.bing} />}
 {noindex && <meta name="robots" content="noindex" />}
 {!noindex && <link rel="canonical" href={canonical} />}
 {

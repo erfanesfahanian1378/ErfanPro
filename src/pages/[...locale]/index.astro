@@ -7,7 +7,7 @@ import ProjectCard from '../../components/ProjectCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import { SITE, SOCIALS } from '../../data/site';
 import { EDUCATION, EXPERIENCE, SKILLS } from '../../data/cv';
-import { localeStaticPaths, localizePath, pick, type Locale } from '../../i18n/config';
+import { LOCALES, localeStaticPaths, localizePath, pick, type Locale } from '../../i18n/config';
 import { dateRange, digits } from '../../i18n/format';
 import { UI, ui } from '../../i18n/ui';
 import { getPosts, getProjects } from '../../lib/content';
@@ -31,25 +31,57 @@ const contact = t.contact
   .replace('{email}', `<a href="mailto:${SITE.email}" dir="ltr">${SITE.email}</a>`)
   .replace('{linkedin}', `<a href="${linkedin?.href}">LinkedIn</a>`);
 
-// Structured data so search engines understand who this site is about.
-const person = {
+// Structured data for search engines: this page is the profile of a person, who that person is
+// (and where else they are online), and that the whole site belongs to them.
+const home = new URL('/', Astro.site).href;
+const personId = `${home}#person`;
+const websiteId = `${home}#website`;
+const structuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: SITE.name,
-  alternateName: UI.fa.name,
-  jobTitle: SITE.jobTitle,
-  url: Astro.site?.href,
-  image: SITE.avatar ? new URL(SITE.avatar, Astro.site).href : undefined,
-  email: `mailto:${SITE.email}`,
-  address: { '@type': 'PostalAddress', addressLocality: 'Milan', addressCountry: 'IT' },
-  alumniOf: EDUCATION.map((degree) => ({ '@type': 'CollegeOrUniversity', name: degree.school.en })),
-  knowsLanguage: ['en', 'fa', 'it'],
-  sameAs: SOCIALS.filter((link) => link.icon !== 'mail').map((link) => link.href),
+  '@graph': [
+    {
+      '@type': 'ProfilePage',
+      url: new URL(localizePath('/', locale), Astro.site).href,
+      name: t.siteTitle,
+      inLanguage: locale,
+      isPartOf: { '@id': websiteId },
+      mainEntity: { '@id': personId },
+    },
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: SITE.name,
+      alternateName: UI.fa.name,
+      description: t.siteDescription,
+      jobTitle: SITE.jobTitle,
+      worksFor: EXPERIENCE.filter((role) => role.end === 'present').map((role) => ({
+        '@type': 'Organization',
+        name: pick(role.org, 'en'),
+      })),
+      url: home,
+      image: SITE.avatar ? new URL(SITE.avatar, Astro.site).href : undefined,
+      email: `mailto:${SITE.email}`,
+      address: { '@type': 'PostalAddress', addressLocality: 'Milan', addressCountry: 'IT' },
+      alumniOf: EDUCATION.map((degree) => ({ '@type': 'CollegeOrUniversity', name: degree.school.en })),
+      knowsLanguage: ['en', 'fa', 'it'],
+      sameAs: SOCIALS.filter((link) => link.icon !== 'mail').map((link) => link.href),
+    },
+    {
+      // Lets Google show "Erfan Esfahanian" as the site's name in search results.
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: home,
+      name: SITE.name,
+      alternateName: UI.fa.name,
+      inLanguage: [...LOCALES],
+      publisher: { '@id': personId },
+    },
+  ],
 };
 ---
 
 <BaseLayout locale={locale} type="profile">
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
   <section class="hero" aria-labelledby="intro">
     <Avatar locale={locale} size={128} />

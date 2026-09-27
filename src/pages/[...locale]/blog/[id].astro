@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Icon from '../../../components/Icon.astro';
+import { SITE } from '../../../data/site';
 import { DEFAULT_LOCALE, LOCALES, LOCALE_META, localizePath, type Locale } from '../../../i18n/config';
 import { formatDate } from '../../../i18n/format';
 import { ui } from '../../../i18n/ui';
@@ -29,6 +30,23 @@ const { locale, post, newer, older } = Astro.props;
 const t = ui(locale);
 const { title, description, date, updated, tags, lang } = post.data;
 const { Content } = await render(post);
+
+// Structured data: marks the post as an article by you, linked to the person on the home page.
+const home = new URL('/', Astro.site).href;
+const canonical = new URL(postUrl(post, lang), Astro.site).href;
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  inLanguage: lang,
+  datePublished: date.toISOString(),
+  dateModified: (updated ?? date).toISOString(),
+  url: canonical,
+  mainEntityOfPage: canonical,
+  image: new URL('/og.png', Astro.site).href,
+  author: { '@type': 'Person', '@id': `${home}#person`, name: SITE.name, url: home },
+};
 ---
 
 <BaseLayout
@@ -40,6 +58,7 @@ const { Content } = await render(post);
   modifiedTime={updated}
   canonicalPath={postUrl(post, lang)}
 >
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(article)} />
   <article class="post">
     <a class="back-link" href={localizePath('/blog/', locale)}>
       <Icon name="arrowLeft" size={16} class="icon-dir" />

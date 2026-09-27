@@ -31,6 +31,7 @@ npm run preview   # serves dist/ to check the production build
 | Colours, spacing, fonts                   | `src/styles/global.css` (tokens at the top)                      |
 | Public URL of the site                    | `SITE_URL` in `astro.config.mjs`                                 |
 | Profile photo                             | put it in `public/` and set `avatar` in `src/data/site.ts`       |
+| Search engine ownership codes             | `VERIFICATION` in `src/data/site.ts`                             |
 | Link preview image (LinkedIn, X, …)       | replace `public/og.png` (1200×630)                               |
 
 ## Languages
@@ -100,6 +101,28 @@ npx wrangler deploy   # asks you to log in to Cloudflare the first time
 ### Other free hosts
 
 `dist/` is plain HTML, CSS and images, so any static host works: Netlify or Vercel (build command `npm run build`, output directory `dist`) or GitHub Pages (with the official `withastro/action`).
+
+## Get found when people search your name
+
+The on-page part is done: your name is in every page title, the home page heading and description, and the photo's file name and alt text. The home page also tells search engines, in structured data, that it is your profile and that your GitHub and LinkedIn belong to the same person. Each language has its own address, linked with `hreflang`. The rest happens outside the code:
+
+1. **Tell Google the site exists.** This matters most: without it, Google can take weeks to find a new site.
+   1. Open [Google Search Console](https://search.google.com/search-console), click **Add property**, choose **URL prefix** and enter `https://erfanpro.es-erfan95.workers.dev/`.
+   2. Choose the **HTML tag** method and copy the value of `content="…"`. Paste it as `google` in `VERIFICATION` in `src/data/site.ts`, then commit and push. Once Cloudflare has redeployed (about a minute), click **Verify**.
+   3. Under **Sitemaps**, submit `sitemap-index.xml`.
+   4. Under **URL inspection**, enter the home page address and click **Request indexing**. Do the same for `/cv/`, `/it/` and `/fa/`.
+2. **Add the site to Bing.** In [Bing Webmaster Tools](https://www.bing.com/webmasters), choose **Import from Google Search Console**; no code needed. Bing's index also powers Yahoo and DuckDuckGo.
+3. **Link to the site from your profiles.** They already rank for your name, and links from them tell Google the site is yours. Use the same name, "Erfan Esfahanian", everywhere.
+   - LinkedIn: **Contact info → Website**, and a link in **Featured**.
+   - GitHub: the **Website** field on your profile and on your repositories (quaderno, kelid, macsmartcleaner).
+   - Anywhere else you have a profile: Upwork, Stack Overflow, your university, conference or meetup pages.
+4. **Consider your own domain**, such as `erfanesfahanian.com`. It costs about $10 a year at Cloudflare Registrar, and hosting stays free. A domain with your name is the biggest single boost for name searches and looks more professional than `workers.dev`. To switch:
+   1. Add the domain under **Workers & Pages → erfanpro → Settings → Domains & Routes → Add → Custom domain**.
+   2. Put the new address in `SITE_URL` in `astro.config.mjs` and push.
+   3. Add the domain in Search Console. For a domain on Cloudflare, Search Console can create the DNS record for you.
+5. **Write now and then.** Each post is another page with your name on it and something people can link to.
+
+Google usually indexes a new site within a few days to a few weeks of step 1. LinkedIn is a very strong site, so your LinkedIn profile may stay near the top as well, and that's fine: it links to this site.
 
 ## Notes
 

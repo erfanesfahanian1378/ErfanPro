@@ -15,10 +15,20 @@ export const SITE = {
   jobTitle: 'Software Engineer',
   email: 'es.erfan95@gmail.com',
   /**
-   * Profile photo: a square image (at least 256×256) in /public.
-   * Set it to '' to show your initials instead.
+   * Profile photo: a square image (at least 256×256) in /public. Naming the file after you
+   * helps it show up in image search. Set it to '' to show your initials instead.
    */
-  avatar: '/avatar.jpg',
+  avatar: '/erfan-esfahanian.jpg',
+};
+
+/**
+ * Codes that prove to search engines that the site is yours (the "HTML tag" method).
+ * Paste only the value of content="…", for example google: 'AbC123…'. Leave '' when unused.
+ * See "Get found when people search your name" in README.md.
+ */
+export const VERIFICATION = {
+  google: '',
+  bing: '',
 };
 
 export const SOCIALS: SocialLink[] = [
