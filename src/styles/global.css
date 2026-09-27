@@ -176,7 +176,7 @@ a:hover {
 .skip-link {
   position: absolute;
   top: -4rem;
-  left: 1rem;
+  inset-inline-start: 1rem;
   z-index: 100;
   padding: 0.6rem 1rem;
   border-radius: var(--radius-sm);
@@ -217,7 +217,7 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-  margin-right: auto;
+  margin-inline-end: auto;
   color: var(--text);
   font-weight: 650;
   letter-spacing: -0.01em;
@@ -303,6 +303,85 @@ a:hover {
 @media (max-width: 32rem) {
   .brand-name {
     display: none;
+  }
+}
+
+/* Language menu (a <details> dropdown, so it works without JavaScript). */
+.lang-menu {
+  position: relative;
+}
+
+.lang-menu > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 2.25rem;
+  padding: 0 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text-2);
+  font-size: 0.8rem;
+  font-weight: 650;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lang-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.lang-menu > summary:hover,
+.lang-menu[open] > summary {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.lang-list {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  inset-inline-end: 0;
+  z-index: 20;
+  min-width: 9.5rem;
+  margin: 0;
+  padding: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.14);
+  list-style: none;
+}
+
+.lang-list a {
+  display: block;
+  padding: 0.45rem 0.7rem;
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.lang-list a:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.lang-list a[aria-current='true'] {
+  color: var(--accent);
+  font-weight: 650;
+}
+
+@media (max-width: 26rem) {
+  .header-inner {
+    gap: 0.5rem;
+  }
+
+  .nav-list a {
+    padding-inline: 0.5rem;
+  }
+
+  .lang-menu > summary {
+    padding: 0 0.45rem;
   }
 }
 
@@ -487,7 +566,7 @@ a:hover {
 
 .badge {
   display: inline-block;
-  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
   padding: 0.1rem 0.45rem;
   border-radius: 6px;
   background: var(--surface-2);
@@ -678,7 +757,7 @@ a:hover {
   display: grid;
   gap: 0.35rem;
   margin: 0;
-  padding-left: 1.1rem;
+  padding-inline-start: 1.1rem;
   color: var(--text-2);
   font-size: 0.95rem;
 }
@@ -900,7 +979,7 @@ a:hover {
 
 .post-nav-link.newer {
   grid-column: 2;
-  text-align: right;
+  text-align: end;
 }
 
 @media (max-width: 40rem) {
@@ -910,7 +989,7 @@ a:hover {
 
   .post-nav-link.newer {
     grid-column: auto;
-    text-align: left;
+    text-align: start;
   }
 }
 
@@ -946,7 +1025,7 @@ a:hover {
 
 .prose ul,
 .prose ol {
-  padding-left: 1.3em;
+  padding-inline-start: 1.3em;
 }
 
 .prose li + li {
@@ -955,8 +1034,8 @@ a:hover {
 
 .prose blockquote {
   margin-inline: 0;
-  padding-left: 1.1rem;
-  border-left: 3px solid var(--border-strong);
+  padding-inline-start: 1.1rem;
+  border-inline-start: 3px solid var(--border-strong);
   color: var(--text-2);
 }
 
@@ -1002,7 +1081,7 @@ a:hover {
 .prose td {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--border);
-  text-align: left;
+  text-align: start;
 }
 
 /* Code highlighting (Shiki): light colours are inline, dark ones come from CSS variables. */
@@ -1164,7 +1243,7 @@ a:hover {
   display: grid;
   gap: 0.3rem;
   margin: 0.6rem 0 0;
-  padding-left: 1.1rem;
+  padding-inline-start: 1.1rem;
   color: var(--text-2);
   font-size: 0.96rem;
 }
@@ -1242,6 +1321,81 @@ a:hover {
 
 .not-found .button-row {
   margin-top: 2rem;
+}
+
+/* ==========================================================================
+   Languages & right-to-left
+   ========================================================================== */
+
+/* Persian text uses Vazirmatn (SIL Open Font License, see /fonts/vazirmatn-OFL.txt).
+   Only the Persian letters come from this file; Latin text keeps the system font. */
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/vazirmatn-arabic.woff2') format('woff2');
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011,
+    U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+html[lang='fa'] {
+  --font-sans: 'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif;
+}
+
+html[lang='fa'] body {
+  line-height: 1.85;
+}
+
+/* Letter spacing breaks up the joined letters of Persian script. */
+html[lang='fa'] * {
+  letter-spacing: normal !important;
+}
+
+html[lang='fa'] :is(h1, h2, h3) {
+  line-height: 1.45;
+}
+
+html[lang='fa'] :is(.section-heading h2, .cv-section > h2) {
+  font-size: 0.92rem;
+}
+
+/* Arrows point the other way in right-to-left pages. */
+[dir='rtl'] .icon-dir {
+  transform: scaleX(-1);
+}
+
+[dir='rtl'] .more-link:hover .icon-dir {
+  transform: scaleX(-1) translateX(2px);
+}
+
+/* Latin tags such as "C++" keep their own direction inside Persian text. */
+.tags li {
+  unicode-bidi: plaintext;
+}
+
+/* Code always reads left to right. */
+.prose pre,
+.prose code {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+.not-found-other {
+  display: grid;
+  gap: 0.5rem;
+  margin: 2.5rem 0 0;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-2);
+  list-style: none;
+}
+
+.not-found-other a {
+  margin-inline-start: 0.35rem;
 }
 
 /* ==========================================================================

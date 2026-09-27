@@ -1,28 +1,41 @@
 ---
-import { formatDate, postUrl, type Post } from '../lib/content';
+import { LOCALE_META, type Locale } from '../i18n/config';
+import { formatDate } from '../i18n/format';
+import { ui } from '../i18n/ui';
+import { postUrl, type Post } from '../lib/content';
 
 interface Props {
   posts: Post[];
+  locale: Locale;
   /** Show each post's description under its title. */
   descriptions?: boolean;
 }
 
-const { posts, descriptions = false } = Astro.props;
+const { posts, locale, descriptions = false } = Astro.props;
 ---
 
 <ul class="post-list">
   {
-    posts.map((post) => (
-      <li>
-        <a href={postUrl(post)} class="post-link">
-          <span class="post-title">
-            {post.data.title}
-            {post.data.draft && <span class="badge">Draft</span>}
-          </span>
-          <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-        </a>
-        {descriptions && <p class="post-description">{post.data.description}</p>}
-      </li>
-    ))
+    posts.map((post) => {
+      // A post keeps its own language, even when it is listed on another language's page.
+      const lang = post.data.lang === locale ? undefined : post.data.lang;
+      const dir = lang ? LOCALE_META[post.data.lang].dir : undefined;
+      return (
+        <li>
+          <a href={postUrl(post, locale)} class="post-link">
+            <span class="post-title" lang={lang} dir={dir}>
+              {post.data.title}
+              {post.data.draft && <span class="badge">{ui(locale).blog.draft}</span>}
+            </span>
+            <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, locale)}</time>
+          </a>
+          {descriptions && (
+            <p class="post-description" lang={lang} dir={dir}>
+              {post.data.description}
+            </p>
+          )}
+        </li>
+      );
+    })
   }
 </ul>

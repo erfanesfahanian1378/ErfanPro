@@ -1,4 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { localizePath, type Locale } from '../i18n/config';
+import { digits } from '../i18n/format';
+import { ui } from '../i18n/ui';
 
 export type Post = CollectionEntry<'posts'>;
 export type Project = CollectionEntry<'projects'>;
@@ -15,15 +18,10 @@ export async function getProjects(): Promise<Project[]> {
   return projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
-export const postUrl = (post: Post) => `/blog/${post.id}/`;
+/** A post's page in the given interface language, e.g. /it/blog/hello/. */
+export const postUrl = (post: Post, locale: Locale) => localizePath(`/blog/${post.id}/`, locale);
 
-export function readingTime(markdown = ''): string {
-  const words = markdown.trim().split(/\s+/).filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / 220))} min read`;
+export function readingTime(markdown: string | undefined, locale: Locale): string {
+  const words = (markdown ?? '').trim().split(/\s+/).filter(Boolean).length;
+  return ui(locale).blog.minRead(digits(String(Math.max(1, Math.round(words / 220))), locale));
 }
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/** "26 Sep 2026". Dates from frontmatter are UTC midnight, so read them in UTC. */
-export const formatDate = (date: Date) =>
-  `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;

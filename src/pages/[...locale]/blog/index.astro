@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import PostList from '../../../components/PostList.astro';
+import { localeStaticPaths, type Locale } from '../../../i18n/config';
+import { digits } from '../../../i18n/format';
+import { ui } from '../../../i18n/ui';
+import { getPosts, type Post } from '../../../lib/content';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = ui(locale);
+const posts = await getPosts();
+
+// Group posts by year, newest year first (posts are already sorted newest first).
+const years = new Map<number, Post[]>();
+for (const post of posts) {
+  const year = post.data.date.getUTCFullYear();
+  years.set(year, [...(years.get(year) ?? []), post]);
+}
+---
+
+<BaseLayout locale={locale} title={t.blog.title} description={t.blog.description}>
+  <header class="page-header">
+    <h1>{t.blog.title}</h1>
+    <p class="lead">{t.blog.lead}</p>
+    <a class="subtle-link" href="/rss.xml" data-astro-reload>
+      <Icon name="rss" size={16} />
+      {t.blog.subscribe}
+    </a>
+  </header>
+
+  {posts.length === 0 && <p class="empty-state">{t.blog.noPosts}</p>}
+
+  {
+    [...years].map(([year, list]) => (
+      <section class="year-group" aria-labelledby={`year-${year}`}>
+        <h2 id={`year-${year}`} class="year-heading">
+          {digits(String(year), locale)}
+        </h2>
+        <PostList posts={list} locale={locale} descriptions />
+      </section>
+    ))
+  }
+</BaseLayout>

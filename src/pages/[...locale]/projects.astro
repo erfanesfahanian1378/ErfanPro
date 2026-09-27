@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { localeStaticPaths, localizePath, type Locale } from '../../i18n/config';
+import { ui } from '../../i18n/ui';
+import { getProjects, type Project } from '../../lib/content';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = ui(locale);
+const projects = await getProjects();
+
+const kinds: Project['data']['kind'][] = ['personal', 'work', 'university'];
+const sections = kinds
+  .map((kind) => ({ kind, title: t.projects.groups[kind], items: projects.filter((p) => p.data.kind === kind) }))
+  .filter((group) => group.items.length > 0);
+
+const lead = t.projects.lead.replace('{cv}', `<a href="${localizePath('/cv/', locale)}">${t.projects.cvLink}</a>`);
+---
+
+<BaseLayout locale={locale} title={t.projects.title} description={t.projects.description}>
+  <header class="page-header">
+    <h1>{t.projects.title}</h1>
+    <p class="lead" set:html={lead} />
+  </header>
+
+  {
+    sections.map((group) => (
+      <section class="section" aria-labelledby={`group-${group.kind}`}>
+        <SectionHeading id={`group-${group.kind}`} title={group.title} />
+        <div class="card-stack">
+          {group.items.map((project) => (
+            <ProjectCard project={project} locale={locale} full />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>

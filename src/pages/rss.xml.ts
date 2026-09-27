@@ -13,7 +13,8 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.date,
-      link: postUrl(post),
+      // Each post links to its page in the language it was written in.
+      link: postUrl(post, post.data.lang),
       categories: post.data.tags,
     })),
     customData: '<language>en</language>',

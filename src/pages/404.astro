@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// One 404 page serves every language, so it speaks all three. The language menu can't know
+// which page was missing, so it links to each language's home page.
 ---
 
-<BaseLayout title="Page not found" noindex>
+<BaseLayout locale="en" title="Page not found" noindex translationPath="/">
   <section class="not-found">
     <p class="eyebrow">404</p>
     <h1>This page doesn't exist.</h1>
@@ -11,5 +14,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <a class="button button-primary" href="/">Go to the home page</a>
       <a class="button" href="/blog/">Read the blog</a>
     </div>
+    <ul class="not-found-other">
+      <li lang="it">Questa pagina non esiste. <a href="/it/">Vai alla pagina iniziale</a></li>
+      <li lang="fa" dir="rtl">این صفحه وجود ندارد. <a href="/fa/">رفتن به صفحهٔ اصلی</a></li>
+    </ul>
   </section>
 </BaseLayout>

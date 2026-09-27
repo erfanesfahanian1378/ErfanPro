@@ -1,10 +1,12 @@
 # ErfanPro
 
-Personal website of **Erfan Esfahanian**: an introduction, the full CV, projects and a blog.
+Personal website of **Erfan Esfahanian**: an introduction, the full CV, projects and a blog, in English, Italian and Persian.
 
-It's a static site built with [Astro](https://astro.build). There's no server, database or client framework, and the only JavaScript is the small dark-mode toggle. The whole build is about 150 KB, and it can be hosted for free on Cloudflare or any other static host.
+It's a static site built with [Astro](https://astro.build). There's no server, database or client framework. The only JavaScript is Astro's page router (links switch pages without a full reload), the dark-mode toggle and the language menu. A page is about 45 KB over the network, photo included, and the site can be hosted for free on Cloudflare or any other static host.
 
 **Pages:** Home (`/`), CV (`/cv/`, printable to PDF), Projects (`/projects/`), Blog (`/blog/` + one page per post), RSS feed (`/rss.xml`), sitemap, robots.txt and a custom 404.
+
+**Languages:** English at `/`, Italian at `/it/` (for example `/it/cv/`) and Persian at `/fa/`, written right to left. The globe menu in the header switches the current page to another language.
 
 ## Run it locally
 
@@ -21,8 +23,8 @@ npm run preview   # serves dist/ to check the production build
 
 | What                                      | Where                                                            |
 | ----------------------------------------- | ---------------------------------------------------------------- |
-| Name, headline, email, social links, menu | `src/data/site.ts`                                               |
-| Intro text on the home page               | `src/pages/index.astro`                                          |
+| Email, social links, menu                 | `src/data/site.ts`                                               |
+| Name, headline, intro, all other labels   | `src/i18n/ui.ts` (one block per language)                        |
 | CV: experience, education, skills         | `src/data/cv.ts`                                                 |
 | Projects                                  | `src/content/projects/*.md`                                      |
 | Blog posts                                | `src/content/posts/*.md`                                         |
@@ -31,10 +33,21 @@ npm run preview   # serves dist/ to check the production build
 | Profile photo                             | put it in `public/` and set `avatar` in `src/data/site.ts`       |
 | Link preview image (LinkedIn, X, …)       | replace `public/og.png` (1200×630)                               |
 
+## Languages
+
+Every text on the site has an English, Italian and Persian version:
+
+- **Interface, headline and intro:** `src/i18n/ui.ts`, with one block per language.
+- **CV:** `src/data/cv.ts`. Each text is written as `{ en: '…', it: '…', fa: '…' }`.
+- **Projects:** in the frontmatter, a text is either a single string, shown in every language, or `{ en: …, it: …, fa: … }`. A missing translation falls back to English.
+- **Posts:** write each post in one language and set `lang` to `en`, `it` or `fa`. The post appears in all three versions of the blog: the menus are translated and the post keeps its own language. Search engines are pointed to the version in the post's language.
+
+Dates follow each language, and Persian pages use Persian digits. Persian pages are right to left and use the [Vazirmatn](https://github.com/rastikerdar/vazirmatn) font from `public/fonts/` (SIL Open Font License). Only Persian pages download it.
+
 ## Write a post
 
-1. Copy `src/content/posts/_template.md` to a new file, for example `src/content/posts/my-first-post.md`. The file name becomes the URL: `/blog/my-first-post/`.
-2. Fill in the frontmatter (`title`, `description`, `date`, `tags`) and write the post in Markdown below it. Set `draft: false` when it's ready: drafts show up in `npm run dev` but are left out of the published site.
+1. Copy `src/content/posts/_template.md` to a new file, for example `src/content/posts/my-first-post.md`. The file name becomes the URL: `/blog/my-first-post/` (and `/it/blog/my-first-post/`, `/fa/blog/my-first-post/`).
+2. Fill in the frontmatter (`title`, `description`, `date`, `lang`, `tags`) and write the post in Markdown below it. Set `draft: false` when it's ready: drafts show up in `npm run dev` but are left out of the published site.
 3. Commit and push. Cloudflare rebuilds and publishes the site in about a minute.
 
 You can also write a post straight from the browser or your phone: on GitHub open `src/content/posts`, choose **Add file → Create new file**, paste the template, and commit.
@@ -43,7 +56,7 @@ Images go in `public/images/` and are referenced as `![Alt text](/images/photo.j
 
 ## Add a project
 
-Copy `src/content/projects/_template.md`. `kind` is `work`, `university` or `personal` (the Projects page groups them), and `featured: true` also shows the project on the home page.
+Copy `src/content/projects/_template.md`. `kind` is `work`, `university` or `personal` (the Projects page groups them), and `featured: true` also shows the project on the home page. The template shows how to translate each text.
 
 ## Deploy for free on Cloudflare
 
@@ -93,6 +106,7 @@ npx wrangler deploy   # asks you to log in to Cloudflare the first time
 - **Node version:** `.nvmrc` pins Node 22, and Cloudflare's build image reads it.
 - **Headers:** `public/_headers` adds basic security headers and long-term caching for Astro's fingerprinted assets. Cloudflare Workers and Pages both apply it.
 - **Privacy:** the site shows your email, GitHub and LinkedIn. Your phone number, home address and work-permit details are deliberately left out.
+- **Fonts:** the system font for English and Italian, and Vazirmatn for Persian (see [Languages](#languages)).
 - **Icons:** [Tabler Icons](https://tabler.io/icons) (MIT), inlined as SVG in `src/lib/icons.ts`.
 
 ## Project structure
@@ -100,8 +114,9 @@ npx wrangler deploy   # asks you to log in to Cloudflare the first time
 ```text
 ├── astro.config.mjs        # site URL, sitemap, Markdown settings
 ├── wrangler.jsonc          # Cloudflare Workers deploy settings (static assets only)
-├── public/                 # copied as-is: favicon, og.png, _headers
+├── public/                 # copied as-is: favicon, photo, og.png, fonts, _headers
 └── src/
+    ├── i18n/               # languages: interface text (ui.ts), dates, URL helpers
     ├── content.config.ts   # schema for posts and projects
     ├── content/
     │   ├── posts/          # blog posts (Markdown)
@@ -112,6 +127,6 @@ npx wrangler deploy   # asks you to log in to Cloudflare the first time
     ├── components/         # header, footer, cards, icons, <head> tags
     ├── layouts/            # page shell
     ├── lib/                # content helpers, icon paths
-    ├── pages/              # one file per route
+    ├── pages/              # one file per route; [...locale]/ builds /, /it/ and /fa/
     └── styles/global.css   # all styles, light and dark themes
 ```

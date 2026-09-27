@@ -15,6 +15,8 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) => !page.endsWith('/404/'),
+      // Tells search engines that /cv/, /it/cv/ and /fa/cv/ are the same page in three languages.
+      i18n: { defaultLocale: 'en', locales: { en: 'en', it: 'it', fa: 'fa' } },
     }),
   ],
   // Keep the HTML-aware whitespace handling so inline elements written on

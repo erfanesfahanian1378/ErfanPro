@@ -1,15 +1,19 @@
 ---
 import { render } from 'astro:content';
 import Icon from './Icon.astro';
+import { pick, type Locale } from '../i18n/config';
+import { digits } from '../i18n/format';
+import { ui } from '../i18n/ui';
 import type { Project } from '../lib/content';
 
 interface Props {
   project: Project;
+  locale: Locale;
   /** Full cards also show highlights and the Markdown body. */
   full?: boolean;
 }
 
-const { project, full = false } = Astro.props;
+const { project, locale, full = false } = Astro.props;
 const { title, summary, period, role, tags, highlights, links } = project.data;
 const hasBody = full && Boolean(project.body?.trim());
 const { Content } = hasBody ? await render(project) : { Content: null };
@@ -17,18 +21,18 @@ const { Content } = hasBody ? await render(project) : { Content: null };
 
 <article class="card project-card">
   <header>
-    <h3>{title}</h3>
+    <h3>{pick(title, locale)}</h3>
     <p class="card-meta">
-      {role && <span>{role}</span>}
-      <span>{period}</span>
+      {role && <span>{pick(role, locale)}</span>}
+      <span>{digits(period, locale)}</span>
     </p>
   </header>
-  <p class="project-summary">{summary}</p>
+  <p class="project-summary">{pick(summary, locale)}</p>
   {
     full && highlights.length > 0 && (
       <ul class="project-highlights">
         {highlights.map((item) => (
-          <li>{item}</li>
+          <li>{pick(item, locale)}</li>
         ))}
       </ul>
     )
@@ -42,7 +46,7 @@ const { Content } = hasBody ? await render(project) : { Content: null };
   }
   {
     tags.length > 0 && (
-      <ul class="tags" aria-label="Technologies">
+      <ul class="tags" aria-label={ui(locale).projects.technologies}>
         {tags.map((tag) => (
           <li>{tag}</li>
         ))}
@@ -54,8 +58,8 @@ const { Content } = hasBody ? await render(project) : { Content: null };
       <p class="project-links">
         {links.map((link) => (
           <a href={link.url} target="_blank" rel="noopener">
-            {link.label}
-            <Icon name="arrowUpRight" size={16} />
+            {pick(link.label, locale)}
+            <Icon name="arrowUpRight" size={16} class="icon-dir" />
           </a>
         ))}
       </p>

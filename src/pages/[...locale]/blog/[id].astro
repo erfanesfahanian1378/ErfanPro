@@ -1,0 +1,94 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import { DEFAULT_LOCALE, LOCALES, LOCALE_META, localizePath, type Locale } from '../../../i18n/config';
+import { formatDate } from '../../../i18n/format';
+import { ui } from '../../../i18n/ui';
+import { getPosts, postUrl, readingTime, type Post } from '../../../lib/content';
+
+// Every post gets a page in each interface language; the post itself stays in the language it was written in.
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return LOCALES.flatMap((locale) =>
+    posts.map((post, index) => ({
+      params: { locale: locale === DEFAULT_LOCALE ? undefined : locale, id: post.id },
+      props: { locale, post, newer: posts[index - 1], older: posts[index + 1] },
+    })),
+  );
+}
+
+interface Props {
+  locale: Locale;
+  post: Post;
+  newer?: Post;
+  older?: Post;
+}
+
+const { locale, post, newer, older } = Astro.props;
+const t = ui(locale);
+const { title, description, date, updated, tags, lang } = post.data;
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={date}
+  modifiedTime={updated}
+  canonicalPath={postUrl(post, lang)}
+>
+  <article class="post">
+    <a class="back-link" href={localizePath('/blog/', locale)}>
+      <Icon name="arrowLeft" size={16} class="icon-dir" />
+      {t.blog.back}
+    </a>
+    <header class="post-header">
+      <h1 lang={lang} dir={LOCALE_META[lang].dir}>{title}</h1>
+      <p class="post-meta">
+        <time datetime={date.toISOString()}>{formatDate(date, locale)}</time>
+        <span>{readingTime(post.body, locale)}</span>
+        {
+          updated && (
+            <span>
+              {t.blog.updated} <time datetime={updated.toISOString()}>{formatDate(updated, locale)}</time>
+            </span>
+          )
+        }
+      </p>
+      {
+        tags.length > 0 && (
+          <ul class="tags" aria-label={t.blog.tags}>
+            {tags.map((tag) => (
+              <li>{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+    <div class="prose" lang={lang} dir={LOCALE_META[lang].dir}>
+      <Content />
+    </div>
+  </article>
+
+  {
+    (older || newer) && (
+      <nav class="post-nav" aria-label={t.blog.back}>
+        {older && (
+          <a class="post-nav-link" href={postUrl(older, locale)}>
+            <span>{t.blog.older}</span>
+            {older.data.title}
+          </a>
+        )}
+        {newer && (
+          <a class="post-nav-link newer" href={postUrl(newer, locale)}>
+            <span>{t.blog.newer}</span>
+            {newer.data.title}
+          </a>
+        )}
+      </nav>
+    )
+  }
+</BaseLayout>

@@ -1,17 +1,20 @@
 ---
 import { SITE } from '../data/site';
+import type { Locale } from '../i18n/config';
+import { ui } from '../i18n/ui';
 
 interface Props {
+  locale: Locale;
   size?: number;
 }
 
-const { size = 96 } = Astro.props;
+const { locale, size = 96 } = Astro.props;
 ---
 
 <div class="avatar" style={`--avatar-size: ${size}px`}>
   {
     SITE.avatar ? (
-      <img src={SITE.avatar} alt={`Photo of ${SITE.name}`} width={size} height={size} decoding="async" />
+      <img src={SITE.avatar} alt={ui(locale).photoAlt} width={size} height={size} decoding="async" />
     ) : (
       <span aria-hidden="true">{SITE.initials}</span>
     )

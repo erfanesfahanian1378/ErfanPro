@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Avatar from '../../components/Avatar.astro';
+import Icon from '../../components/Icon.astro';
+import PostList from '../../components/PostList.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { SITE, SOCIALS } from '../../data/site';
+import { EDUCATION, EXPERIENCE, SKILLS } from '../../data/cv';
+import { localeStaticPaths, localizePath, pick, type Locale } from '../../i18n/config';
+import { dateRange, digits } from '../../i18n/format';
+import { UI, ui } from '../../i18n/ui';
+import { getPosts, getProjects } from '../../lib/content';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = ui(locale);
+const posts = (await getPosts()).slice(0, 3);
+const featured = (await getProjects()).filter((project) => project.data.featured).slice(0, 4);
+const recentRoles = EXPERIENCE.slice(0, 5);
+const linkedin = SOCIALS.find((link) => link.icon === 'linkedin');
+
+const contact = t.contact
+  .replace('{email}', `<a href="mailto:${SITE.email}" dir="ltr">${SITE.email}</a>`)
+  .replace('{linkedin}', `<a href="${linkedin?.href}">LinkedIn</a>`);
+
+// Structured data so search engines understand who this site is about.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  alternateName: UI.fa.name,
+  jobTitle: SITE.jobTitle,
+  url: Astro.site?.href,
+  image: SITE.avatar ? new URL(SITE.avatar, Astro.site).href : undefined,
+  email: `mailto:${SITE.email}`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Milan', addressCountry: 'IT' },
+  alumniOf: EDUCATION.map((degree) => ({ '@type': 'CollegeOrUniversity', name: degree.school.en })),
+  knowsLanguage: ['en', 'fa', 'it'],
+  sameAs: SOCIALS.filter((link) => link.icon !== 'mail').map((link) => link.href),
+};
+---
+
+<BaseLayout locale={locale} type="profile">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
+
+  <section class="hero" aria-labelledby="intro">
+    <Avatar locale={locale} size={128} />
+    <h1 id="intro">{t.name}</h1>
+    <p class="hero-role">{t.headline}</p>
+    <ul class="hero-facts">
+      <li><Icon name="mapPin" size={18} />{t.location}</li>
+      <li><Icon name="briefcase" size={18} />{t.current}</li>
+      <li><Icon name="school" size={18} />{t.educationFact}</li>
+    </ul>
+    <div class="hero-bio">
+      {t.bio.map((paragraph) => <p set:html={paragraph} />)}
+    </div>
+    <div class="button-row">
+      <a class="button button-primary" href={localizePath('/cv/', locale)}>
+        {t.viewCv}
+        <Icon name="arrowRight" size={18} class="icon-dir" />
+      </a>
+      {
+        SOCIALS.map((link) => (
+          <a
+            class="button"
+            href={link.href}
+            rel={link.icon === 'mail' ? undefined : 'me noopener'}
+            target={link.icon === 'mail' ? undefined : '_blank'}
+          >
+            <Icon name={link.icon} size={18} />
+            {link.icon === 'mail' ? t.email : link.label}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="experience">
+    <SectionHeading
+      id="experience"
+      title={t.sections.experience}
+      more={{ href: localizePath('/cv/', locale), label: t.more.fullCv }}
+    />
+    <ol class="timeline">
+      {
+        recentRoles.map((role) => (
+          <li class="timeline-item">
+            <p class="timeline-dates">{dateRange(role.start, role.end, locale)}</p>
+            <div>
+              <h3 class="timeline-title">
+                {role.title[locale]} <span class="org">· {pick(role.org, locale)}</span>
+              </h3>
+              <p class="timeline-text">{role.highlights[0][locale]}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section class="section" aria-labelledby="projects">
+        <SectionHeading
+          id="projects"
+          title={t.sections.selectedProjects}
+          more={{ href: localizePath('/projects/', locale), label: t.more.allProjects }}
+        />
+        <div class="card-grid">
+          {featured.map((project) => (
+            <ProjectCard project={project} locale={locale} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="posts">
+    <SectionHeading
+      id="posts"
+      title={t.sections.latestPosts}
+      more={{ href: localizePath('/blog/', locale), label: t.more.allPosts }}
+    />
+    {posts.length > 0 ? <PostList posts={posts} locale={locale} /> : <p class="muted">{t.blog.noPosts}</p>}
+  </section>
+
+  <section class="section" aria-labelledby="skills">
+    <SectionHeading id="skills" title={t.sections.skills} />
+    <dl class="skills">
+      {
+        SKILLS.map(({ group, items }) => (
+          <div class="skill-row">
+            <dt>{group[locale]}</dt>
+            <dd>
+              <ul class="tags">
+                {items.map((item) => (
+                  <li>{pick(item, locale)}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="section" aria-labelledby="education">
+    <SectionHeading id="education" title={t.sections.education} />
+    <ol class="timeline">
+      {
+        EDUCATION.map((degree) => (
+          <li class="timeline-item">
+            <p class="timeline-dates">{digits(degree.period, locale)}</p>
+            <div>
+              <h3 class="timeline-title">
+                {degree.degree[locale]} <span class="org">· {degree.school[locale]}</span>
+              </h3>
+              <p class="timeline-text">
+                {[degree.detail?.[locale], degree.location[locale], ...degree.notes.map((note) => note[locale])]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section contact" aria-labelledby="contact">
+    <SectionHeading id="contact" title={t.sections.getInTouch} />
+    <p class="contact-text" set:html={contact} />
+  </section>
+</BaseLayout>
