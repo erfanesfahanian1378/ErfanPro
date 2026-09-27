@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 // The public address of the site. It is used for canonical links, the sitemap,
 // the RSS feed and social-media previews, so update it after your first deploy
 // (for example https://erfanpro.<your-subdomain>.workers.dev or your own domain).
-const SITE_URL = 'https://erfanpro.pages.dev';
+const SITE_URL = 'https://erfanpro.es-erfan95.workers.dev';
 
 export default defineConfig({
   site: SITE_URL,
